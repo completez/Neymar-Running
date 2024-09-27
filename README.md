@@ -1,3 +1,2 @@
 # Neymar-Running
-Username : user\n
-Password : pass
+Username : user | Password : pass | pls input image before login
