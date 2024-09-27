@@ -1,3 +1,3 @@
 # Neymar-Running
-Username : user
+Username : user\n
 Password : pass
