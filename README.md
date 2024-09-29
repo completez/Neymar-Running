@@ -33,7 +33,7 @@ To run the game, use the following command:
 ```bash
 python main.py
 ```
-Step 5: Game Instructions
+###Step 5: Game Instructions
 Login: When you start the game, you'll be presented with a login screen. Enter the username and password.
   1.Default credentials:
   Username: `user`
