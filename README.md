@@ -1,4 +1,4 @@
-# NEYMAR RUNNING - A Simple Game with Login Functionality
+# NEYMAR RUNNING - A Simple Game
 
 This project implements a simple game where the player controls a character (Neymar) running and jumping over obstacles while collecting coins. The game includes a login screen, requiring the user to enter a username and password before proceeding. The character image is customizable, and the choice of image is saved in a config file for future use.
 
