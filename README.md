@@ -17,23 +17,23 @@ Clone the repository to your local machine:
 git clone https://github.com/completez/Neymar-Running.git
 cd Neymar-Running
 ```
-###Step 2: Install Dependencies
+### Step 2: Install Dependencies
 Install the required dependencies using the following command:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-###Step 3: Configure the `config.txt`
+### Step 3: Configure the `config.txt`
 On the first run, after a successful login, the program will prompt you to input a character image filename (e.g., neymar.png). The selected image file is saved in config.txt and will be loaded automatically on subsequent runs.
 
-###Step 4: Running the Game
+### Step 4: Running the Game
 To run the game, use the following command:
 
 ```bash
 python main.py
 ```
-###Step 5: Game Instructions
+### Step 5: Game Instructions
 Login: When you start the game, you'll be presented with a login screen. Enter the username and password.
   1.Default credentials:
   Username: `user`
@@ -45,18 +45,18 @@ Login: When you start the game, you'll be presented with a login screen. Enter t
   Press the spacebar to jump and avoid obstacles.
   Collect coins to increase your score.
   
-###Project Structure
+### Project Structure
 **config.txt**: Stores the selected character image filename.
 **main.py**: Main entry point for the game.
 **README.md**: Documentation for the project.
 
-##Functionality Overview
+### Functionality Overview
 **Login System**: Prompts the user for a username and password before starting the game. Correct credentials are required to proceed.
 **Image Selection**: Allows users to select and load a custom image for the player character. The selected image is saved in config.txt for future runs.
 **Obstacle and Coin Generation**: Randomly generates obstacles and coins on the screen. The player must jump to avoid obstacles and collect coins for points.
 **Character Control**: The player can jump using the spacebar. The game includes a double jump functionality.
 
-##Example
+### Example
 To play the game:
 
 Start the game with:
@@ -71,7 +71,7 @@ Input the following credentials at the login screen:
   Enter the filename of the character image (e.g., `neymar.png`).
 
 
-##Troubleshooting
+### Troubleshooting
   **Character image not found**: Ensure the image file exists in the project directory. If not found, the program will prompt you to input a valid image filename.
   **Login issues**: Verify that you're entering the correct default credentials:
   Username: `user`
