@@ -14,7 +14,7 @@ This project implements a simple game where the player controls a character (Ney
 Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/your-username/neymar-running-game.git
+git clone https://github.com/completez/neymar-running-game.git
 cd neymar-running-game
 ```
 ###Step 2: Install Dependencies
