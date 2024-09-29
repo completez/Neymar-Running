@@ -4,6 +4,7 @@ import random
 import os
 
 pygame.init()
+pygame.mixer.init()
 
 WIDTH, HEIGHT = 800, 400
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -16,6 +17,10 @@ GOLD = (255, 215, 0)
 FONT = pygame.font.SysFont(None, 55)
 SMALL_FONT = pygame.font.SysFont(None, 35)
 
+jump_sound = pygame.mixer.Sound("./sound/cartoon-jump-6462.mp3")
+game_over_sound = pygame.mixer.Sound("./sound/game-over-arcade-6435.mp3")
+coin_sound = pygame.mixer.Sound("./sound/coin-recieved-230517.mp3")
+
 player_img = None
 config_file = "config.txt"
 
@@ -27,6 +32,7 @@ jump_speed = 0
 jump_count = 0
 is_jumping = False
 MAX_JUMPS = 2
+lives = 3
 
 obstacle_width, obstacle_height = 40, 60
 obstacles = []
@@ -47,32 +53,51 @@ correct_username = "user"
 correct_password = "pass"
 
 def load_config():
-    global player_img
+    global player_img, username, password, is_logged_in
     if os.path.exists(config_file):
         with open(config_file, 'r') as f:
-            img_file = f.readline().strip()
-            if os.path.exists(img_file):
-                player_img = pygame.image.load(img_file)
-                player_img = pygame.transform.scale(player_img, (50, 50))
-                print(f"Loaded image from config: {img_file}")
-            else:
-                print("Image file not found, please input a valid image.")
-                input_image_file()
-    else:
-        input_image_file()
+            data = f.readlines()
+            if len(data) >= 1:
+                img_file = data[0].strip()
+                if os.path.exists(img_file):
+                    player_img = pygame.image.load(img_file)
+                    player_img = pygame.transform.scale(player_img, (50, 50))
+                else:
+                    player_img = pygame.Surface((50, 50))
+                    player_img.fill(RED)
 
-def input_image_file():
-    global player_img
-    img_file = input("Enter image filename (e.g., 'neymar.png'): ")
-    if os.path.exists(img_file):
-        player_img = pygame.image.load(img_file)
-        player_img = pygame.transform.scale(player_img, (50, 50))
-        with open(config_file, 'w') as f:
-            f.write(img_file)
-        print(f"Image saved to config: {img_file}")
+            if len(data) >= 3:
+                username = data[1].strip()
+                password = data[2].strip()
+                if username == correct_username and password == correct_password:
+                    is_logged_in = True
     else:
-        print("Image file not found. Please try again.")
-        input_image_file()
+        player_img = pygame.Surface((50, 50))
+        player_img.fill(RED)
+
+def reset_game():
+    global player_x, player_y, jump_speed, jump_count, is_jumping, obstacles, coins
+    player_x = 100
+    player_y = HEIGHT - 150
+    jump_speed = 0
+    jump_count = 0
+    is_jumping = False
+    obstacles = []
+    coins = []
+
+def save_config(img_file, username, password):
+    with open(config_file, 'w') as f:
+        f.write(f"{img_file}\n")
+        f.write(f"{username}\n")
+        f.write(f"{password}\n")
+
+def validate_login():
+    global username, password, error_message, is_logged_in
+    if username == correct_username and password == correct_password:
+        is_logged_in = True
+        save_config('neymar.png', username, password)
+    else:
+        error_message = "Invalid credentials"
 
 def create_obstacle():
     obstacle_x = WIDTH + random.randint(100, 300)
@@ -108,8 +133,33 @@ def login_screen():
     pygame.display.update()
     return username_rect, password_rect
 
+def game_over_screen():
+    global lives, score
+    screen.fill(WHITE)
+    game_over_sound.play()
+    game_over_text = FONT.render("Game Over!", True, RED)
+    score_text = SMALL_FONT.render(f"Score: {score}", True, BLACK)
+    try_again_text = SMALL_FONT.render("Press R to try again", True, BLACK)
+    screen.blit(game_over_text, (WIDTH // 2 - 100, HEIGHT // 2 - 100))
+    screen.blit(score_text, (WIDTH // 2 - 100, HEIGHT // 2 - 50))
+    screen.blit(try_again_text, (WIDTH // 2 - 100, HEIGHT // 2))
+    pygame.display.update()
+
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    reset_game()
+                    waiting = False
+                    lives = 3
+                    score = 0 
+
 def game_screen():
-    global player_y, is_jumping, jump_speed, jump_count, score
+    global player_y, is_jumping, jump_speed, jump_count, score, lives
     
     screen.fill(WHITE)
     
@@ -119,6 +169,7 @@ def game_screen():
         is_jumping = True
         jump_speed = -10  
         jump_count += 1
+        jump_sound.play()
 
     if is_jumping:
         player_y += jump_speed  
@@ -143,14 +194,18 @@ def game_screen():
     for obstacle in obstacles:
         if player_x + player_width > obstacle[0] and player_x < obstacle[0] + obstacle_width:
             if player_y + player_height > obstacle[1]:
-                pygame.quit()
-                sys.exit()
+                lives -= 1
+                if lives == 0:
+                    game_over_screen()
+                else:
+                    reset_game()
 
     for coin in coins:
         if player_x + player_width > coin[0] and player_x < coin[0] + coin_size:
             if player_y + player_height > coin[1] and player_y < coin[1] + coin_size:
                 coins.remove(coin)
                 score += 1
+                coin_sound.play()
 
     screen.blit(player_img, (player_x, player_y))
 
@@ -160,21 +215,21 @@ def game_screen():
     for coin in coins:
         pygame.draw.circle(screen, GOLD, (coin[0], coin[1]), coin_size)
 
-    pygame.display.update()
+    lives_text = SMALL_FONT.render(f"Lives: {lives}", True, BLACK)
+    screen.blit(lives_text, (10, 10))
 
-def validate_login():
-    global username, password, error_message, is_logged_in
-    if username == correct_username and password == correct_password:
-        is_logged_in = True
-        load_config()  
-    else:
-        error_message = "Invalid credentials"
+    score_text = SMALL_FONT.render(f"Score: {score}", True, BLACK)
+    screen.blit(score_text, (10, 40))
+
+    pygame.display.update()
 
 def main():
     global username, password, active_input, is_logged_in, input_color
     
     clock = pygame.time.Clock()
     running = True
+
+    load_config()
 
     while running:
         if not is_logged_in:
