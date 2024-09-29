@@ -15,7 +15,7 @@ Clone the repository to your local machine:
 
 ```bash
 git clone https://github.com/completez/Neymar-Running.git
-cd neymar-running-game
+cd Neymar-Running
 ```
 ###Step 2: Install Dependencies
 Install the required dependencies using the following command:
