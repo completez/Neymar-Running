@@ -77,4 +77,4 @@ Input the following credentials at the login screen:
   Username: `user`
   Password: `pass`
 
-##Enjoy the game!
+###### Enjoy the game!
